@@ -1,0 +1,10 @@
+
+#Folders
+node_modules
+dist
+
+#Files
+.gitignore
+tsconfig.json
+package.json
+package-lock.json
