@@ -25,18 +25,18 @@ const ExecutePlugins = async ({
                 })
                 break
             case Plugins.SCREENSHOT:
-                let screenPath = `./screenshots/${process.name}/${process.name}-${parcour.index}.png`
+                const screenPath = `./screenshots/${process.name}/${process.name}-${parcour.index}.png`
                 await page.screenshot({
                     path: screenPath,
                     optimizeForSpeed: true,
                     fullPage: true,
                 })
                 parcour.screenPath = screenPath
-                await new Promise((resolve) => setTimeout(resolve, 1000))
                 break
             default:
                 break
         }
+        await new Promise((resolve) => setTimeout(resolve, 500))
     }
 }
 

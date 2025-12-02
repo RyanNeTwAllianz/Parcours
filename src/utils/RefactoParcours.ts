@@ -21,13 +21,24 @@ const RefactoParcours = (parcours: Parcours[]): RefacoParcours[] => {
         (p) => ![Commands.OPEN, Commands.SET_WINDOW_SIZE].includes(p.command)
     )
 
-    parcours.map((p) => {
-        if (p.processName === ParcoursStepName.DEVIS_FQ)
-            return refactoParcours[0] ? refactoParcours[0].parcours.push(p) : []
+    const seenUrls = new Set()
 
-        if (p.processName === ParcoursStepName.DEVIS_PL)
-            return refactoParcours[1] ? refactoParcours[1].parcours.push(p) : []
-    })
+    for (let i = parcours.length - 1; i >= 0; i--) {
+        const p = parcours[i]
+        if (!p) continue
+
+        if (!seenUrls.has(p.stepName)) {
+            seenUrls.add(p.stepName)
+
+            if (p.processName === ParcoursStepName.DEVIS_FQ) {
+                refactoParcours[0] && refactoParcours[0].parcours.push(p)
+            } else if (p.processName === ParcoursStepName.DEVIS_PL) {
+                refactoParcours[1] && refactoParcours[1].parcours.push(p)
+            }
+        }
+    }
+
+    refactoParcours.forEach((rp) => rp.parcours.reverse())
 
     return refactoParcours
 }

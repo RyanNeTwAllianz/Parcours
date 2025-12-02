@@ -29,6 +29,18 @@ const ParcourForm = async ({ page, process }: IProps): Promise<Parcours[]> => {
     })
 
     for (let i = 0; i < process.tests[0].commands.length; i++) {
+        try {
+            await page.waitForSelector('app-loading div', {
+                timeout: 500,
+                visible: false,
+            })
+            await page.waitForSelector('app-fast-quote, app-normal-quote', {
+                timeout: 500,
+                visible: true,
+            })
+            await new Promise((resolve) => setTimeout(resolve, 5000))
+        } catch (e) {}
+
         const cmd = process.tests[0].commands[i]
         if (!cmd) continue
 
@@ -49,7 +61,13 @@ const ParcourForm = async ({ page, process }: IProps): Promise<Parcours[]> => {
             ...digitalData.azfr.page,
         }
 
-        if (![Commands.OPEN, Commands.SET_WINDOW_SIZE].includes(cmd.command))
+        if (
+            ![
+                Commands.OPEN,
+                Commands.SET_WINDOW_SIZE,
+                Commands.SCRIPT,
+            ].includes(cmd.command)
+        )
             await ExecutePlugins({ process, page, cleanTarget, parcour })
 
         parcours.push(parcour)
@@ -59,7 +77,6 @@ const ParcourForm = async ({ page, process }: IProps): Promise<Parcours[]> => {
         switch (cmd.command) {
             case Commands.CLICK:
                 await Click({ page, selector: cleanTarget })
-                console.log('ICI?????')
                 break
             case Commands.TYPE:
                 await Type({ page, selector: cleanTarget, value: cmd.value })
@@ -67,13 +84,11 @@ const ParcourForm = async ({ page, process }: IProps): Promise<Parcours[]> => {
             case Commands.SCRIPT:
                 await ExecuteScript({ page, script: cmd.value })
                 break
-            case Commands.CHANGING_PAGE:
-            case Commands.CUSTOM:
-                break
             default:
                 console.log('Skipped command:', { cmd })
-                continue
+                break
         }
+        await new Promise((resolve) => setTimeout(resolve, 1000))
     }
 
     return parcours

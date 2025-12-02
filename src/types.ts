@@ -11,6 +11,8 @@ export enum Commands {
 export enum Plugins {
     SCREENSHOT = 'screenshot',
     RED = 'red',
+    PDF = 'pdf',
+    CONSOLE = 'console',
 }
 
 export enum WindowSize {
@@ -73,4 +75,10 @@ export type Parcours = DigitalData['process'] &
 export type RefacoParcours = {
     stepName: ParcoursStepName
     parcours: Parcours[]
+}
+
+export type ConsoleType = {
+    type: string
+    text: string
+    loc: string
 }

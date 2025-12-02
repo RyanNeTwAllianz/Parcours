@@ -3,7 +3,7 @@ import puppeteer, { Browser, Page } from 'puppeteer'
 const Init = async (): Promise<{ browser: Browser }> => {
     const browser = await puppeteer.launch({
         headless: false,
-        devtools: false,
+        devtools: true,
         args: [
             '--no-sandbox',
             '--disable-features=SameSiteByDefaultCookies',

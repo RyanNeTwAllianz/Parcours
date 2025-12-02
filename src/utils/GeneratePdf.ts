@@ -1,5 +1,5 @@
 import type { Page } from 'puppeteer'
-import type { Parcours, ProcessType } from '../types.js'
+import { Plugins, type Parcours, type ProcessType } from '../types.js'
 import { readFileSync, existsSync } from 'node:fs'
 
 type IProps = {
@@ -9,6 +9,8 @@ type IProps = {
 }
 
 const GeneratePdf = async ({ parcours, page, process }: IProps) => {
+    if (!process.plugins.includes(Plugins.PDF)) return
+
     let html = `
         <html>
         <head>
