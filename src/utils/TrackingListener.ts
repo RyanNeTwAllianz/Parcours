@@ -7,11 +7,10 @@ type IProps = {
 }
 
 const TrackingListener = async ({ page, process }: IProps): Promise<void> => {
-    if (!process.plugins.includes(Plugins.NETWORK)) return
-
-    await page.tracing.start({
-        path: './output/tracking_' + process.name + '.json',
-    })
+    if (process.plugins.includes(Plugins.TRACKING))
+        await page.tracing.start({
+            path: './output/tracking_' + process.name + '.json',
+        })
 }
 
 export default TrackingListener

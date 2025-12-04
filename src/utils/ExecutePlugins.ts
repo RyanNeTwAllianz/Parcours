@@ -32,6 +32,7 @@ const ExecutePlugins = async ({
                     fullPage: true,
                 })
                 parcour.screenPath = screenPath
+                await new Promise((resolve) => setTimeout(resolve, 3000))
                 break
             default:
                 break

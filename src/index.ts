@@ -14,49 +14,40 @@ import NetworkListener from './utils/NetworkListener.js'
 
 const Main = async () => {
     const files = GetArgsFromCmd()
-    let browser = (await Init()).browser
-    let reloadBrowser = false
+    let browser = null
+    let reloadBrowser = true
 
     for (const file of files) {
         const process = await ReadFile(file)
         CreateFolder('./screenshots/' + process.name)
         CreateFolder('./output/' + process.name)
 
-        if (process.reloadBrowser) browser = (await Init()).browser
+        if (reloadBrowser) browser = (await Init({ process })).browser
+        if (!browser) continue
 
         process.url =
             process.url + (process.tests[0]?.commands[0]?.target ?? '')
 
-        const { page } = await ChangePage({ browser, process })
-        const net = await NetworkListener({ page, process })
+        const { page, net } = await ChangePage({ browser, process })
         const csl = await ConsoleListener({ page, process })
         const parcours = await ParcourForm({ page, process })
 
-        await CreateFile({
-            array: parcours,
-            fileName: './output/' + process.name + '/' + process.name + '.json',
-        })
         await GeneratePdf({ parcours, page, process })
         await End({ browser, process, page })
 
         await CreateFile({
+            array: parcours,
+            fileName: `./output/${process.name}/parcours.json`,
+        })
+        await CreateFile({
             array: csl,
-            fileName:
-                './output/' +
-                process.name +
-                '/console_' +
-                process.name +
-                '.json',
+            fileName: `./output/${process.name}/console.json`,
         })
         await CreateFile({
             array: net,
-            fileName:
-                './output/' +
-                process.name +
-                '/network_' +
-                process.name +
-                '.json',
+            fileName: `./output/${process.name}/network.json`,
         })
+
         const refactoParcours = RefactoParcours(parcours)
         await GenerateHTML({ data: refactoParcours, process })
         reloadBrowser = process.reloadBrowser

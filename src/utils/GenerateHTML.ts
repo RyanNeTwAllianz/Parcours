@@ -1,5 +1,5 @@
 import { writeFileSync } from 'node:fs'
-import type { ProcessType, RefacoParcours } from '../types.js'
+import { Plugins, type ProcessType, type RefacoParcours } from '../types.js'
 
 type IProps = {
     data: RefacoParcours[]
@@ -7,6 +7,8 @@ type IProps = {
 }
 
 const GenerateHTML = async ({ data, process }: IProps): Promise<void> => {
+    if (!process.plugins.includes(Plugins.HTML)) return
+
     let html = `
     <!DOCTYPE html>
     <html lang="fr">
@@ -153,7 +155,7 @@ const GenerateHTML = async ({ data, process }: IProps): Promise<void> => {
   `
 
     for (const step of data) {
-      if (!step.parcours.length) continue
+        if (!step.parcours.length) continue
         html += `
       <div class="step">
         <div class="step-name">${step.stepName}</div>
@@ -202,10 +204,7 @@ const GenerateHTML = async ({ data, process }: IProps): Promise<void> => {
     </html>
   `
 
-    await writeFileSync(
-        './output/' + process.name + '/html_' + process.name + '.html',
-        html
-    )
+    await writeFileSync(`./output/${process.name}/html.html`, html)
     console.log('HTML created !')
 }
 

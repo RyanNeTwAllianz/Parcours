@@ -65,7 +65,7 @@ const GeneratePdf = async ({ parcours, page, process }: IProps) => {
 
     await page.setContent(html, { waitUntil: 'load', timeout: 60000 })
     await page.pdf({
-        path: './output/' + process.name + '/' + process.name + '.pdf',
+        path: `./output/${process.name}/pdf.pdf`,
         format: 'A4',
         printBackground: true,
     })

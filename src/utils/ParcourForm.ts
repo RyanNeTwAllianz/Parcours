@@ -29,28 +29,26 @@ const ParcourForm = async ({ page, process }: IProps): Promise<Parcours[]> => {
     })
 
     for (let i = 0; i < process.tests[0].commands.length; i++) {
-        try {
-            await page.waitForSelector('app-loading div', {
-                timeout: 500,
-                visible: false,
-            })
-            await page.waitForSelector(
-                'app-fast-quote, app-normal-quote, app-end-of-journey',
-                {
-                    timeout: 500,
-                    visible: true,
-                }
-            )
-            await new Promise((resolve) => setTimeout(resolve, 5000))
-        } catch (e) {}
-
         const cmd = process.tests[0].commands[i]
         if (!cmd) continue
 
         const cleanTarget = cmd.target.replace('css=', '')
-        const digitalData = (await page.evaluate('digitalData')) as DigitalData
 
-        let currentUrl = digitalData.page.pageInfo.URL
+        if ([Commands.CLICK, Commands.TYPE].includes(cmd.command)) {
+            try {
+                await page.waitForSelector(cleanTarget, {
+                    timeout: 30000,
+                    visible: true,
+                })
+            } catch (e) {}
+        }
+
+        let digitalData = {} as DigitalData
+        try {
+            digitalData = (await page.evaluate('digitalData')) as DigitalData
+        } catch (e) {}
+
+        let currentUrl = digitalData?.page?.pageInfo?.URL ?? page.url()
         let parcour: Parcours = {
             currentUrl,
             previousUrl,
@@ -59,9 +57,11 @@ const ParcourForm = async ({ page, process }: IProps): Promise<Parcours[]> => {
             command: cmd.command,
             skip: currentUrl === previousUrl,
             screenPath: '',
+            processName: digitalData?.process?.processName,
+            stepName: digitalData?.process?.stepName,
             previousProcessName,
-            ...digitalData.process,
-            ...digitalData.azfr.page,
+            pageKey: digitalData?.azfr?.page?.pageKey,
+            prevPageKey: digitalData?.azfr?.page?.prevPageKey,
         }
 
         if (
@@ -75,7 +75,7 @@ const ParcourForm = async ({ page, process }: IProps): Promise<Parcours[]> => {
 
         parcours.push(parcour)
         previousUrl = currentUrl
-        previousProcessName = digitalData.process.processName
+        previousProcessName = digitalData?.process?.processName
 
         switch (cmd.command) {
             case Commands.CLICK:
@@ -87,14 +87,18 @@ const ParcourForm = async ({ page, process }: IProps): Promise<Parcours[]> => {
             case Commands.SCRIPT:
                 await ExecuteScript({ page, script: cmd.value })
                 break
-            case Commands.CHANGING_PAGE:
             case Commands.CUSTOM:
+                try {
+                    await eval(cmd.value)
+                } catch (e) {
+                    console.log('Error while executing CUSTOM FUNCTION', { e })
+                }
                 break
             default:
                 console.log('Skipped command:', { cmd })
                 break
         }
-        await new Promise((resolve) => setTimeout(resolve, 1000))
+        await new Promise((resolve) => setTimeout(resolve, 500))
     }
 
     return parcours

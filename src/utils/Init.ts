@@ -1,6 +1,11 @@
 import puppeteer, { Browser, Page } from 'puppeteer'
+import type { ProcessType } from '../types.js'
 
-const Init = async (): Promise<{ browser: Browser }> => {
+type IProps = {
+    process: ProcessType
+}
+
+const Init = async ({ process }: IProps): Promise<{ browser: Browser }> => {
     const browser = await puppeteer.launch({
         headless: false,
         devtools: true,
@@ -11,7 +16,8 @@ const Init = async (): Promise<{ browser: Browser }> => {
             '--disable-third-party-cookie-blocking',
             '--disable-web-security',
             '--proxy-server=127.0.0.1:9000',
-            `--window-size=1280,800`,
+            '--enable-features=NetworkService',
+            `--window-size=${process.size ?? '1366,768'}`,
         ],
     })
     console.log('Browser launched')

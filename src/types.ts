@@ -15,6 +15,7 @@ export enum Plugins {
     CONSOLE = 'console',
     NETWORK = 'network',
     TRACKING = 'tracking',
+    HTML = 'html',
 }
 
 export enum WindowSize {
@@ -29,8 +30,8 @@ export enum ParcoursStepName {
     MER_EMAIL_FQ = 'mer email fq',
     MER_EMAIL_Pl = 'mer email pl',
     WCB = 'wcb',
-    MER_AGENT_FQ = "mer agent fq",
-    MER_AGENT_PL = "mer agent pl",
+    MER_AGENT_FQ = 'mer agent fq',
+    MER_AGENT_PL = 'mer agent pl',
 }
 
 export type ProcessType = {
@@ -38,6 +39,7 @@ export type ProcessType = {
     url: string
     acceptCookies: boolean
     reloadBrowser: boolean
+    blockedDomains: string[]
     plugins: Plugins[]
     size: WindowSize
     tests: {
@@ -92,6 +94,9 @@ export type ConsoleType = {
 
 export type NetWorkType = {
     url: string
+    status: string
     method: string
+    initiator: string
     headers: Record<string, string>
+    body: string
 }

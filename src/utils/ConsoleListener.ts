@@ -1,6 +1,5 @@
 import type { Page } from 'puppeteer'
 import { Plugins, type ConsoleType, type ProcessType } from '../types.js'
-import ExecuteScript from './Trigger/ExecuteScript.js'
 
 type IProps = {
     page: Page
@@ -12,8 +11,6 @@ const ConsoleListener = async ({
     process,
 }: IProps): Promise<ConsoleType[]> => {
     if (!process.plugins.includes(Plugins.CONSOLE)) return []
-
-    await ExecuteScript({ page, script: 'tlz.setDebug(1)' })
 
     let csl: ConsoleType[] = []
     page.on('console', (message) =>

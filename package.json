@@ -5,7 +5,7 @@
   "scripts": {
     "build": "prettier . --write && tsc --project tsconfig.json && echo \"Build success\" || echo \"Build failed\"",
     "build:fast": "tsc --project tsconfig.json && echo \"Build success\" || echo \"Build failed\"",
-    "setup": "node dist/setup.js && tsc --project tsconfig.json && echo \"Build success\" || echo \"Build failed\"",
+    "setup": "tsc --project tsconfig.json && echo \"Build success\" || echo \"Build failed\" && node dist/setup.js",
     "start": "node dist/index.js",
     "prettier": "prettier . --write"
   },
