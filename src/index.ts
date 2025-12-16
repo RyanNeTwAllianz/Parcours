@@ -1,67 +1,60 @@
 import GetArgsFromCmd from './utils/GetArgsFromCmd.js'
-import Init from './utils/Init.js'
-import End from './utils/End.js'
 import ReadFile from './utils/ReadFile.js'
-import ParcourForm from './utils/ParcourForm.js'
-import CreateFile from './utils/CreateFile.js'
-import GeneratePdf from './utils/GeneratePdf.js'
-import CreateFolder from './utils/GenerateFolder.js'
-import RefactoParcours from './utils/RefactoParcours.js'
-import GenerateHTML from './utils/GenerateHTML.js'
-import ChangePage from './utils/ChangePage.js'
-import ConsoleListener from './utils/ConsoleListener.js'
-import GetTodayDateAndTime from './utils/GetTodayDateAndTime.js'
 import type { BashType, ProcessType } from './types.js'
-import CreateCookie from './utils/CreateCookie.js'
+import TreatFile from './utils/TreatFile.js'
 import FillProcessWithBash from './utils/FillProcessWithBash.js'
+import Init from './utils/Init.js'
+import TreatBash from './utils/TreatBash.js'
+
+const isBashType = (file: BashType | ProcessType): file is BashType => {
+    return typeof file.tests[0] === 'string'
+}
+
+const isFileType = (file: BashType | ProcessType): file is ProcessType => {
+    return typeof file.tests[0] === 'object'
+}
 
 const Main = async () => {
-    const bashes = GetArgsFromCmd()
+    const args = GetArgsFromCmd()
     let browser = null
     let reloadBrowser = true
+    const closeWindow = true
 
-    for (const b of bashes) {
-        const bash = await ReadFile<BashType>(b)
-        const { tests, cookies } = bash
+    for (const arg of args) {
+        let file = await ReadFile<BashType | ProcessType>(arg)
 
-        for (const [index, file] of tests.entries()) {
-            let process = await ReadFile<ProcessType>(file)
-            let { name } = process
-            name = file
-            process = FillProcessWithBash({ bash, process })
+        if (isFileType(file)) {
+            console.log('Running file')
 
-            CreateFolder('./screenshots/' + name)
-
-            if (reloadBrowser) browser = (await Init({ process })).browser
+            if (reloadBrowser) browser = (await Init({ process: file })).browser
             if (!browser) continue
 
-            await CreateCookie({ browser, cookies })
-            const { page, net } = await ChangePage({ browser, process })
-            const csl = await ConsoleListener({ page, process })
-            const parcours = await ParcourForm({ page, process })
-
-            await GeneratePdf({ parcours, page, process })
-            reloadBrowser =
-                tests.length === index + 1 ? true : process.reloadBrowser
-            process.reloadBrowser = reloadBrowser
-            await End({ browser, process, page })
-
-            const time = GetTodayDateAndTime()
-            await CreateFile({
-                array: parcours,
-                fileName: `./output/parcours_${name}_${time}.json`,
+            await TreatFile({
+                fileName: arg,
+                reloadBrowser,
+                browser,
+                closeWindow,
+                index: 0,
             })
-            await CreateFile({
-                array: csl,
-                fileName: `./output/console_${name}_${time}.json`,
-            })
-            await CreateFile({
-                array: net,
-                fileName: `./output/network_${name}_${time}.json`,
-            })
+        } else if (isBashType(file)) {
+            for (const [index, f] of file.tests.entries()) {
+                console.log('Running bash')
 
-            const refactoParcours = RefactoParcours(parcours)
-            await GenerateHTML({ data: refactoParcours, process })
+                let process = await ReadFile<ProcessType>(f)
+                process = FillProcessWithBash({ bash: file, process })
+                process.name = f
+
+                if (reloadBrowser) browser = (await Init({ process })).browser
+                if (!browser) continue
+
+                await TreatBash({
+                    process,
+                    reloadBrowser,
+                    browser,
+                    closeWindow,
+                    index,
+                })
+            }
         }
     }
 }

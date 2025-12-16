@@ -43,20 +43,6 @@ type CommandType = {
     comment: string
 }
 
-export type ProcessType = {
-    name: string
-    url: string
-    acceptCookies: boolean
-    urlParams?: string
-    reloadBrowser: boolean
-    blockedUrls?: string[]
-    plugins: Plugins[]
-    size: string
-    tests: {
-        commands: CommandType[]
-    }[]
-}
-
 export type CookieType = {
     comment: string
     name: string
@@ -64,6 +50,23 @@ export type CookieType = {
     path: string
     'max-age': string
     value: string
+}
+
+export type ProcessType = {
+    name: string
+    url: string
+    acceptCookies: boolean
+    urlParams?: string
+    reloadBrowser: boolean
+    closeWindow: boolean
+    blockedUrls?: string[]
+    plugins: Plugins[]
+    cookies?: CookieType[]
+    size: string
+    bashNumberList: number
+    tests: {
+        commands: CommandType[]
+    }[]
 }
 
 export type BashType = {

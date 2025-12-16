@@ -1,8 +1,8 @@
 import puppeteer, { Browser, Page } from 'puppeteer'
-import type { ProcessType } from '../types.js'
+import type { BashType, ProcessType } from '../types.js'
 
 type IProps = {
-    process: ProcessType
+    process: ProcessType | BashType
 }
 
 const Init = async ({ process }: IProps): Promise<{ browser: Browser }> => {

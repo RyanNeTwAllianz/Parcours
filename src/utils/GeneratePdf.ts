@@ -10,7 +10,7 @@ type IProps = {
 }
 
 const GeneratePdf = async ({ parcours, page, process }: IProps) => {
-    if (!process.plugins.includes(Plugins.PDF)) return
+    if (!(process.plugins ?? []).includes(Plugins.PDF)) return
 
     let html = `
         <html>

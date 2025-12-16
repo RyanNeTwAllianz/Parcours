@@ -14,10 +14,13 @@ const FillProcessWithBash = ({ bash, process }: IProps): ProcessType => {
         doBefore,
         size,
         reloadBrowser,
+        cookies,
     } = bash
 
     process.size = size
     process.reloadBrowser = reloadBrowser
+    process.cookies = cookies ?? []
+    process.bashNumberList = bash.tests.length
 
     process.plugins = plugins?.length ? plugins : (process.plugins ?? [])
 
@@ -38,6 +41,7 @@ const FillProcessWithBash = ({ bash, process }: IProps): ProcessType => {
     doAfter?.length &&
         process.tests[0] &&
         process.tests[0].commands.push(...doAfter)
+
     return process
 }
 

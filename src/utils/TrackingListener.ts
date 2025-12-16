@@ -8,7 +8,7 @@ type IProps = {
 }
 
 const TrackingListener = async ({ page, process }: IProps): Promise<void> => {
-    if (process.plugins.includes(Plugins.TRACKING)) {
+    if ((process.plugins ?? []).includes(Plugins.TRACKING)) {
         const time = GetTodayDateAndTime()
         await page.tracing.start({
             path: `./output/tracking_${process.name}_${time}.json`,

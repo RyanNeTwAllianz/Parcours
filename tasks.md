@@ -51,8 +51,8 @@
 - [x] Définir comment **configurer la taille de l’écran**
       ↳ (viewport / window size)
 
-- [ ] Pouvoir contrôler si la **fenêtre se ferme ou non à la fin**
-    - [ ] Est-ce une option dans les `.json` ?
+- [x] Pouvoir contrôler si la **fenêtre se ferme ou non à la fin**
+    - [x] Est-ce une option dans les `.json` ?
     - [ ] Ou une option au lancement du script ?
 
 ---

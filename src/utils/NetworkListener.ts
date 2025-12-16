@@ -1,4 +1,4 @@
-import { Browser, type Page } from 'puppeteer'
+import { Browser, HTTPRequest, type Page } from 'puppeteer'
 import { Plugins, type NetWorkType, type ProcessType } from '../types.js'
 import GetTodayDateAndTime from './GetTodayDateAndTime.js'
 
@@ -22,7 +22,7 @@ const NetworkListener = async ({
     process,
     browser,
 }: IProps): Promise<NetWorkType[]> => {
-    if (!process.plugins.includes(Plugins.NETWORK)) return []
+    if (!(process.plugins ?? []).includes(Plugins.NETWORK)) return []
 
     const net: NetWorkType[] = []
     const blocked = (process.blockedUrls ?? []).map((d) => `*${d}*`)
@@ -69,7 +69,7 @@ const NetworkListener = async ({
         if (i !== -1) net[i] && (net[i].status = e.response.status.toString())
     })
 
-    page.on('request', async (req) => {
+    page.on('request', async (req: HTTPRequest) => {
         const url = req.url()
 
         if (shouldBlock(url, process.blockedUrls ?? [])) {

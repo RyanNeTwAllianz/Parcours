@@ -10,7 +10,7 @@ const ConsoleListener = async ({
     page,
     process,
 }: IProps): Promise<ConsoleType[]> => {
-    if (!process.plugins.includes(Plugins.CONSOLE)) return []
+    if (!(process.plugins ?? []).includes(Plugins.CONSOLE)) return []
 
     let csl: ConsoleType[] = []
     page.on('console', async (message) => {

@@ -8,7 +8,7 @@ type IProps = {
 }
 
 const GenerateHTML = async ({ data, process }: IProps): Promise<void> => {
-    if (!process.plugins.includes(Plugins.HTML)) return
+    if (!(process.plugins ?? []).includes(Plugins.HTML)) return
 
     let html = `
     <!DOCTYPE html>

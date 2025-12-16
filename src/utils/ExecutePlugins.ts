@@ -10,6 +10,8 @@ type IProps = {
 }
 
 const ExecutePlugins = async ({ process, page, parcour, target }: IProps) => {
+    if (!process.plugins?.length) return
+
     for (const plugin of process.plugins) {
         switch (plugin) {
             case Plugins.RED:
