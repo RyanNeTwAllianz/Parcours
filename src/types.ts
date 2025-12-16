@@ -20,12 +20,6 @@ export enum Plugins {
     HTML = 'html',
 }
 
-export enum WindowSize {
-    PHONE = 'phone',
-    PC = 'pc',
-    TABLET = 'tablet',
-}
-
 export enum ParcoursStepName {
     DEVIS_FQ = 'devis fq',
     DEVIS_PL = 'devis pl',

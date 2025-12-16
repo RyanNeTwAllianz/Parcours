@@ -7,13 +7,11 @@ import Init from './utils/Init.js'
 import TreatBash from './utils/TreatBash.js'
 import End from './utils/End.js'
 
-const isBashType = (file: BashType | ProcessType): file is BashType => {
-    return typeof file.tests[0] === 'string'
-}
+const isBashType = (file: BashType | ProcessType): file is BashType =>
+    typeof file.tests[0] === 'string'
 
-const isFileType = (file: BashType | ProcessType): file is ProcessType => {
-    return typeof file.tests[0] === 'object'
-}
+const isFileType = (file: BashType | ProcessType): file is ProcessType =>
+    typeof file.tests[0] === 'object'
 
 const Main = async () => {
     const args = GetArgsFromCmd()
