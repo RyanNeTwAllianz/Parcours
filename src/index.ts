@@ -36,7 +36,6 @@ const Main = async () => {
             })
 
             const { process, page } = result
-
             if (i + 1 === args.length && process.closeWindow) {
                 process.reloadBrowser = true
                 await End({ browser, process, page })
@@ -49,7 +48,7 @@ const Main = async () => {
 
                 let process = await ReadFile<ProcessType>(f)
                 process = FillProcessWithBash({ bash: file, process })
-                process.name = f
+                process.name = f + file.testsNameSuffix
 
                 if (reloadBrowser) browser = (await Init({ process })).browser
                 if (!browser) continue

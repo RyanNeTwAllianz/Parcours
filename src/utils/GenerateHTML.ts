@@ -168,7 +168,7 @@ const GenerateHTML = async ({ data, process }: IProps): Promise<void> => {
             <strong>${parcours.stepName}</strong>
             <span class="field">URL : ${parcours.currentUrl}</span>
             <span class="field">Previous URL : ${parcours.previousUrl}</span>
-            <img src="../../${parcours.screenPath}" alt="Capture d'écran" onclick="openModal('../../${parcours.screenPath}')"/>
+            <img src="../${parcours.screenPath}" alt="Capture d'écran" onclick="openModal('../${parcours.screenPath}')"/>
         </div>
         `
         }
