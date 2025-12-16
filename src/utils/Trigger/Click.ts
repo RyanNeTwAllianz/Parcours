@@ -8,7 +8,7 @@ type IProps = {
 const Click = async ({ page, selector }: IProps): Promise<void> => {
     try {
         await page.waitForSelector(selector, { visible: true, timeout: 10000 })
-        await page.click(selector, { delay: 240 })
+        await page.click(selector, { delay: 120 })
     } catch (e) {
         console.log(e)
     }
