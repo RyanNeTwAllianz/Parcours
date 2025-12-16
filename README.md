@@ -55,7 +55,7 @@ Example :
 | Plugins.NETWORK    | Return network logs file   |
 | Plugins.TRACKING   | Return tracking logs file  |
 
-## Explications
+## TYPES
 
 ### Bash : BashType
 
@@ -83,3 +83,4 @@ Example :
 | blockedUrls | string[]                    | Urls to block           |
 | tests       | {commands: CommandType[]}[] | Commands to execute     |
 
+## EXPLICATIONS

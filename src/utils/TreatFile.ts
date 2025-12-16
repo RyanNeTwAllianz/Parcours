@@ -1,5 +1,5 @@
-import type { Browser } from 'puppeteer'
-import type { ProcessType } from '../types.js'
+import type { Browser, Page } from 'puppeteer'
+import { Plugins, type ProcessType } from '../types.js'
 import CreateFolder from './GenerateFolder.js'
 import ReadFile from './ReadFile.js'
 import CreateCookie from './CreateCookie.js'
@@ -17,22 +17,23 @@ type IProps = {
     fileName: string
     browser: Browser
     reloadBrowser: boolean
-    closeWindow: boolean
-    index: number
 }
 
 const TreatFile = async ({
     fileName,
     reloadBrowser,
     browser,
-    closeWindow,
-    index,
-}: IProps) => {
+}: IProps): Promise<{
+    reloadBrowser: boolean
+    process: ProcessType
+    page: Page
+}> => {
     let process = await ReadFile<ProcessType>(fileName)
     let { name } = process
     name = fileName
 
-    CreateFolder('./screenshots/' + name)
+    if (process.plugins?.includes(Plugins.SCREENSHOT))
+        CreateFolder('./screenshots/' + name)
 
     await CreateCookie({ browser, cookies: process.cookies })
     const { page, net } = await ChangePage({ browser, process })
@@ -41,11 +42,7 @@ const TreatFile = async ({
 
     await GeneratePdf({ parcours, page, process })
 
-    reloadBrowser =
-        process.bashNumberList === index + 1 || closeWindow
-            ? true
-            : process.reloadBrowser
-    process.reloadBrowser = reloadBrowser
+    reloadBrowser = process.reloadBrowser
     await End({ browser, process, page })
 
     const time = GetTodayDateAndTime()
@@ -64,6 +61,8 @@ const TreatFile = async ({
 
     const refactoParcours = RefactoParcours(parcours)
     await GenerateHTML({ data: refactoParcours, process })
+
+    return { reloadBrowser, process, page }
 }
 
 export default TreatFile

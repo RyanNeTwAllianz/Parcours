@@ -15,10 +15,12 @@ const FillProcessWithBash = ({ bash, process }: IProps): ProcessType => {
         size,
         reloadBrowser,
         cookies,
+        closeWindow,
     } = bash
 
     process.size = size
     process.reloadBrowser = reloadBrowser
+    process.closeWindow = closeWindow || process.closeWindow || true
     process.cookies = cookies ?? []
     process.bashNumberList = bash.tests.length
 

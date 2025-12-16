@@ -73,6 +73,7 @@ export type BashType = {
     testsNameSuffix: string
     reloadBrowser: boolean
     size: string
+    closeWindow: boolean
     parallelTests: number
     cookies?: CookieType[]
     blockedUrls?: string[]

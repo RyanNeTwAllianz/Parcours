@@ -1,10 +1,10 @@
 import CreateFolder from './GenerateFolder.js'
-import type { ProcessType } from '../types.js'
+import { Plugins, type ProcessType } from '../types.js'
 import CreateCookie from './CreateCookie.js'
 import ChangePage from './ChangePage.js'
 import ConsoleListener from './ConsoleListener.js'
 import ParcourForm from './ParcourForm.js'
-import type { Browser } from 'puppeteer'
+import type { Browser, Page } from 'puppeteer'
 import GeneratePdf from './GeneratePdf.js'
 import End from './End.js'
 import GetTodayDateAndTime from './GetTodayDateAndTime.js'
@@ -16,19 +16,17 @@ type IProps = {
     process: ProcessType
     browser: Browser
     reloadBrowser: boolean
-    closeWindow: boolean
-    index: number
 }
 
 const TreatBash = async ({
     process,
     browser,
     reloadBrowser,
-    closeWindow,
-    index,
-}: IProps) => {
+}: IProps): Promise<{ reloadBrowser: boolean; page: Page }> => {
     const { name } = process
-    CreateFolder('./screenshots/' + name)
+
+    if (process.plugins?.includes(Plugins.SCREENSHOT))
+        CreateFolder('./screenshots/' + name)
 
     await CreateCookie({ browser, cookies: process.cookies })
     const { page, net } = await ChangePage({ browser, process })
@@ -37,11 +35,7 @@ const TreatBash = async ({
 
     await GeneratePdf({ parcours, page, process })
 
-    reloadBrowser =
-        process.bashNumberList === index + 1 || closeWindow
-            ? true
-            : process.reloadBrowser
-    process.reloadBrowser = reloadBrowser
+    reloadBrowser = process.reloadBrowser
     await End({ browser, process, page })
 
     const time = GetTodayDateAndTime()
@@ -60,6 +54,8 @@ const TreatBash = async ({
 
     const refactoParcours = RefactoParcours(parcours)
     await GenerateHTML({ data: refactoParcours, process })
+
+    return { reloadBrowser, page }
 }
 
 export default TreatBash

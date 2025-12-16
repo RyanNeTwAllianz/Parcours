@@ -5,6 +5,7 @@ import TreatFile from './utils/TreatFile.js'
 import FillProcessWithBash from './utils/FillProcessWithBash.js'
 import Init from './utils/Init.js'
 import TreatBash from './utils/TreatBash.js'
+import End from './utils/End.js'
 
 const isBashType = (file: BashType | ProcessType): file is BashType => {
     return typeof file.tests[0] === 'string'
@@ -18,9 +19,8 @@ const Main = async () => {
     const args = GetArgsFromCmd()
     let browser = null
     let reloadBrowser = true
-    const closeWindow = true
 
-    for (const arg of args) {
+    for (const [i, arg] of args.entries()) {
         let file = await ReadFile<BashType | ProcessType>(arg)
 
         if (isFileType(file)) {
@@ -29,13 +29,20 @@ const Main = async () => {
             if (reloadBrowser) browser = (await Init({ process: file })).browser
             if (!browser) continue
 
-            await TreatFile({
+            const result = await TreatFile({
                 fileName: arg,
                 reloadBrowser,
                 browser,
-                closeWindow,
-                index: 0,
             })
+
+            const { process, page } = result
+
+            if (i + 1 === args.length && process.closeWindow) {
+                process.reloadBrowser = true
+                await End({ browser, process, page })
+            }
+
+            reloadBrowser = result.reloadBrowser
         } else if (isBashType(file)) {
             for (const [index, f] of file.tests.entries()) {
                 console.log('Running bash')
@@ -47,13 +54,18 @@ const Main = async () => {
                 if (reloadBrowser) browser = (await Init({ process })).browser
                 if (!browser) continue
 
-                await TreatBash({
+                const result = await TreatBash({
                     process,
                     reloadBrowser,
                     browser,
-                    closeWindow,
-                    index,
                 })
+
+                if (index + 1 === file.tests.length && process.closeWindow) {
+                    process.reloadBrowser = true
+                    await End({ browser, process, page: result.page })
+                }
+
+                reloadBrowser = result.reloadBrowser
             }
         }
     }
