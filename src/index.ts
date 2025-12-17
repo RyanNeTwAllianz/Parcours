@@ -41,9 +41,8 @@ const Main = async () => {
 
             reloadBrowser = result.reloadBrowser
         } else if (isBashType(file)) {
+            console.log('Running bash')
             for (const [index, f] of file.tests.entries()) {
-                console.log('Running bash')
-
                 let process = await ReadFile<ProcessType>(f)
                 process = FillProcessWithBash({ bash: file, process })
                 process.name = f + file.testsNameSuffix
