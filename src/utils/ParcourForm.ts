@@ -1,4 +1,4 @@
-import type { Page } from 'puppeteer'
+import type { Browser, Page } from 'puppeteer'
 import {
     Commands,
     type DigitalData,
@@ -10,13 +10,19 @@ import Type from './Trigger/Type.js'
 import ExecutePlugins from './ExecutePlugins.js'
 import ExecuteScript from './Trigger/ExecuteScript.js'
 import AddJavaScript from './Trigger/AddJavaScript.js'
+import ChangePage from './ChangePage.js'
 
 type IProps = {
+    browser: Browser
     page: Page
     process: ProcessType
 }
 
-const ParcourForm = async ({ page, process }: IProps): Promise<Parcours[]> => {
+const ParcourForm = async ({
+    browser,
+    page,
+    process,
+}: IProps): Promise<Parcours[]> => {
     let parcours: Parcours[] = []
     let previousUrl = page.url()
     let previousProcessName = ''
@@ -95,6 +101,14 @@ const ParcourForm = async ({ page, process }: IProps): Promise<Parcours[]> => {
                 break
             case Commands.CUSTOM:
                 await AddJavaScript(value)
+                break
+            case Commands.OPEN:
+                await ChangePage({
+                    browser,
+                    process,
+                    url: value,
+                    waitUntil: 'networkidle2',
+                })
                 break
             default:
                 break

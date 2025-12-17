@@ -38,7 +38,7 @@ const TreatFile = async ({
     await CreateCookie({ browser, cookies: process.cookies })
     const { page, net } = await ChangePage({ browser, process })
     const csl = await ConsoleListener({ page, process })
-    const parcours = await ParcourForm({ page, process })
+    const parcours = await ParcourForm({ browser, page, process })
 
     await GeneratePdf({ parcours, page, process })
 
